@@ -1,11 +1,17 @@
-﻿#ifndef _CGI_STRING_H_130104_
-#define _CGI_STRING_H_130104_
+﻿/*
+* Copyright (c) 2012 Yu Cheng wen
+* yu0736@live.com
+*/
+
+#ifndef _TK_STRING_H_
+#define _TK_STRING_H_
 
 #include <vector>
 #include <cstring>
 #include <cstdlib>
+#include "tk_platform.h"
 
-class String
+class TK_API String
 {
 public:
     String();
@@ -27,7 +33,7 @@ public:
         return _capacity;
     }
 
-    inline bool empty()
+    inline bool empty() const
     {
         return (strlen(_data) == 0);
     }
@@ -51,7 +57,7 @@ public:
     String toUpper();
     // 小写
     String toLower();
-    
+
     inline long toLong(int base = 10) const
     {
         return strtol(_data, 0, base);
@@ -60,20 +66,22 @@ public:
     {
         return strtod(_data, 0);
     }
-    
+
     static String number(int value);
     static String number(float value);
 
-    String operator+(const String & str);
-    String operator+(const char * str);
+    String operator+(const String & str) const;
+    String operator+(const char * str) const;
     void operator=(const String & str);
     void operator=(const char * str);
     void operator+=(const String & str);
     void operator+=(const char * str);
-    bool operator==(const String & str);
-    bool operator==(const char * str);
-    bool operator!=(const String & str);
-    bool operator!=(const char * str);
+    bool operator==(const String & str) const;
+    bool operator==(const char * str) const;
+    bool operator!=(const String & str) const;
+    bool operator!=(const char * str) const;
+    bool operator<(const String & str) const;
+    bool operator>(const String & str) const;
 
 private:
     char * _data;

@@ -1,6 +1,6 @@
 ﻿#include <cstring>
 #include <cstdio>
-#include "cgi_string.h"
+#include "tk_string.h"
 
 using std::vector;
 
@@ -94,12 +94,12 @@ String & String::replace(const String & old_part, const String & new_part)
 {
     if(find(old_part) == -1)
         return *this;
-        
+
     // 替换后字符串的长度
     _capacity = strlen(_data) + contain(old_part) * (new_part.size() - old_part.size()) + 1;
     char * str = new char[_capacity];
     memset(str, 0, _capacity);
-    
+
     char * head = _data;
     char * p = strstr(head, old_part.data());
     while(p)
@@ -110,7 +110,7 @@ String & String::replace(const String & old_part, const String & new_part)
         p = strstr(head, old_part.data());
     }
     strcat(str, head);
-    
+
     delete [] _data;
     _data = str;
     return *this;
@@ -125,7 +125,7 @@ String & String::trimmed()
         while(_data[0] == black[i])
         {
             size_t last = strlen(_data) - 1;
-            for(int j = 0; j < last; j++)
+            for(size_t j = 0; j < last; j++)
                 _data[j] = _data[j + 1];
             _data[last] = '\0';
         }
@@ -188,7 +188,7 @@ String String::toLower()
     return result;
 }
 
-String String::operator+(const char * str)
+String String::operator+(const char * str) const
 {
     size_t len = size() + strlen(str) + 1;
     char * tmp = new char[len];
@@ -200,14 +200,14 @@ String String::operator+(const char * str)
     return result;
 }
 
-String String::operator+(const String & str)
+String String::operator+(const String & str) const
 {
     return operator+(str.data());
 }
 
 void String::operator+=(const char * str)
 {
-    int len = _capacity;
+    size_t len = _capacity;
     while(len < size() + strlen(str) + 1)
         len *= 2;
     if(len != _capacity)
@@ -229,7 +229,7 @@ void String::operator+=(const String & str)
 
 void String::operator=(const char * str)
 {
-    int len = _capacity;
+    size_t len = _capacity;
     while(len < strlen(str) + 1)
         len *= 2;
     if(len != _capacity)
@@ -247,22 +247,32 @@ void String::operator=(const String & str)
     return operator=(str.data());
 }
 
-bool String::operator==(const char * str)
+bool String::operator==(const char * str) const
 {
     return (strcmp(_data, str) == 0);
 }
 
-bool String::operator==(const String & str)
+bool String::operator==(const String & str) const
 {
     return operator==(str.data());
 }
 
-bool String::operator!=(const char * str)
+bool String::operator!=(const char * str) const
 {
     return (strcmp(_data, str) != 0);
 }
 
-bool String::operator!=(const String & str)
+bool String::operator!=(const String & str) const
 {
     return operator==(str.data());
+}
+
+bool String::operator<(const String & str) const
+{
+    return (strcmp(_data, str.data()) < 0);
+}
+
+bool String::operator>(const String & str) const
+{
+    return (strcmp(_data, str.data()) > 0);
 }
