@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 2.6)
+project(tkcgi)
+add_definitions(-DTK_DLL)
+#include_directories(include)
+#link_directories(lib)
+aux_source_directory(. SRC_LIST)
+#target_link_libraries(tkcgi libmysql)
+add_library(tkcgi SHARED ${SRC_LIST})
