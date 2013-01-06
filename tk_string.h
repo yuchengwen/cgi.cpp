@@ -82,6 +82,7 @@ public:
     bool operator!=(const char * str) const;
     bool operator<(const String & str) const;
     bool operator>(const String & str) const;
+    char & operator[](size_t i) const;
 
 private:
     char * _data;

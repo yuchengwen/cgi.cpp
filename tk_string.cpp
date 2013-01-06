@@ -21,13 +21,22 @@ String::String(const String & str)
 
 String::String(const char * str, size_t size)
 {
-    if(size && size < strlen(str))
-        _capacity = size + 1;
+    if(str)
+    {
+        if(size && size < strlen(str))
+            _capacity = size + 1;
+        else
+            _capacity = strlen(str) + 1;
+        _data = new char[_capacity];
+        memset(_data, 0, _capacity);
+        strncpy(_data, str, _capacity - 1);
+    }
     else
-        _capacity = strlen(str) + 1;
-    _data = new char[_capacity];
-    memset(_data, 0, _capacity);
-    strncpy(_data, str, _capacity - 1);
+    {
+        _capacity = 16;
+        _data = new char[_capacity];
+        memset(_data, 0, _capacity);
+    }
 }
 
 String::String(size_t capacity)
@@ -275,4 +284,9 @@ bool String::operator<(const String & str) const
 bool String::operator>(const String & str) const
 {
     return (strcmp(_data, str.data()) > 0);
+}
+
+char & String::operator[](size_t i) const
+{
+    return _data[i];
 }
