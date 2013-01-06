@@ -58,6 +58,13 @@ String String::number(int value)
     return buf;
 }
 
+String String::number(unsigned int value)
+{
+    char buf[16] = {0};
+    sprintf(buf, "%d", value);
+    return buf;
+}
+
 String String::number(float value)
 {
     char buf[16] = {0};
@@ -197,6 +204,36 @@ String String::toLower()
     return result;
 }
 
+String & String::encode()
+{
+    replace("&", "&amp;");
+    replace("<", "&lt;");
+    replace(">", "&gt;");
+    replace("\"", "&#34;");
+    replace("'", "&#39;");
+    replace("\n", "<br/>");
+    return *this;
+}
+
+String & String::decode()
+{
+    replace("<br/>", "\n");
+    replace("&#39;", "'");
+    replace("&#34;", "\"");
+    replace("&lt;", "<");
+    replace("&gt;", ">");
+    replace("&amp;", "&");
+    return *this;
+}
+
+String & String::filterForSQL()
+{
+    replace("\\", "\\\\");
+    replace("\"", "\\\"");
+    replace("'", "\\'");
+    return *this;
+}
+
 String String::operator+(const char * str) const
 {
     size_t len = size() + strlen(str) + 1;
@@ -286,7 +323,7 @@ bool String::operator>(const String & str) const
     return (strcmp(_data, str.data()) > 0);
 }
 
-char & String::operator[](size_t i) const
+char & String::operator[](size_t i)
 {
     return _data[i];
 }

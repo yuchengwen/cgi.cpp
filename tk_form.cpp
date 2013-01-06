@@ -1,6 +1,7 @@
 ﻿#include <cstdio>
 #include <cstring>
 #include <vector>
+#include <ctime>
 #include "tk_platform.h"
 #ifdef TK_WIN
 #include <io.h>
@@ -13,6 +14,9 @@
 #define POST_LINE_LEN_MAX 512
 
 using namespace std;
+
+// 默认最大上传文件大小为10MB
+size_t Form::_max_upload_size = 10240;
 
 Form::Form()
 {
@@ -125,20 +129,32 @@ Form::Form()
                         file_info.size = line - pos;
                     }
 
-                    if(file_info.size / 1024 > 10240) //TODO 10M
+                    if(file_info.size / 1024 > Form::_max_upload_size)
                         file_info.status = Oversize;
                     else
                     {
                         // 构造文件名
-                        strcpy(file_info.name, "123"); //TODO
+                        sprintf(file_info.name, "%d", time(0));
+                        String postfix;
                         vector<String> name_list = disposition["filename"].split('.');
                         if(name_list.size() > 1)
+                            postfix = name_list[name_list.size() - 1];
+                        size_t name_idx = 0;
+                        do
                         {
-                            strcat(file_info.name, ".");
-                            strcat(file_info.name, + name_list[name_list.size() - 1].data());
-                        }
+                            String filename = String(file_info.name) + String::number(name_idx);
+                            if(!postfix.empty())
+                                filename = filename + "." + postfix;
+                            if(access(filename.data(), 0) == 0)
+                                name_idx++;
+                            else
+                            {
+                                strcpy(file_info.name, filename.data());
+                                break;
+                            }
+                        }while(name_idx < 1024);
 
-                        FILE * file = fopen((String("./cache") + file_info.name).data(), "wb"); //TODO
+                        FILE * file = fopen(file_info.name, "wb");
                         if(file)
                         {
                             fwrite(pos, 1, file_info.size, file);
@@ -215,6 +231,47 @@ Form::Form()
         else
             _post[pair[0]] = pair[1];
     }
+}
+
+Form::~Form()
+{
+    // 删除上传的文件
+    for(map<String, FileInfo>::iterator it = _upload.begin(); it != _upload.end(); it++)
+    {
+        if(it->second.status == Success && access(it->second.name, 0) == 0)
+        {
+            if(remove(it->second.name) != 0)
+                CGI_ERROR("Delete file failed: %s", it->second.name);
+        }
+    }
+}
+
+Status Form::uploadStatus(const String & key)
+{
+    if(_upload.find(key) == _upload.end())
+        return Failed;
+    return _upload[key].status;
+}
+
+size_t Form::uploadSize(const String & key)
+{
+    if(_upload.find(key) == _upload.end())
+        return Failed;
+    return _upload[key].size;
+}
+
+String Form::uploadFile(const String & key)
+{
+    if(_upload.find(key) == _upload.end())
+        return "";
+    return _upload[key].name;
+}
+
+void Form::fileSaved(const String & key)
+{
+    if(_upload.find(key) == _upload.end())
+        return;
+    _upload[key].status = Saved;
 }
 
 size_t Form::findEnding(char ** ch)

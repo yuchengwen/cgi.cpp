@@ -57,6 +57,12 @@ public:
     String toUpper();
     // 小写
     String toLower();
+    // 过滤HTML字符
+    String & encode();
+    // 反过滤HTML字符
+    String & decode();
+    // 过滤SQL危险字符
+    String & filterForSQL();
 
     inline long toLong(int base = 10) const
     {
@@ -68,6 +74,7 @@ public:
     }
 
     static String number(int value);
+    static String number(unsigned int value);
     static String number(float value);
 
     String operator+(const String & str) const;
@@ -82,7 +89,7 @@ public:
     bool operator!=(const char * str) const;
     bool operator<(const String & str) const;
     bool operator>(const String & str) const;
-    char & operator[](size_t i) const;
+    char & operator[](size_t i);
 
 private:
     char * _data;

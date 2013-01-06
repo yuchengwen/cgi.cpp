@@ -35,11 +35,38 @@ class TK_API Form
 {
 public:
     Form();
+    ~Form();
 
     inline String & method()
     {
         return _method;
     }
+
+    inline String & get(const String & key)
+    {
+        return _get[key];
+    }
+
+    inline String & post(const String & key)
+    {
+        return _post[key];
+    }
+
+    // 最大上传文件大小, 单位KB
+    static inline size_t maxUpdateSize()
+    {
+        return Form::_max_upload_size;
+    }
+    static inline void setMaxUploadSize(size_t size)
+    {
+        Form::_max_upload_size = size;
+    }
+
+    // 上传文件的信息
+    Status uploadStatus(const String & key);
+    size_t uploadSize(const String & key);
+    String uploadFile(const String &key);
+    void fileSaved(const String &key);
 
 private:
     // 指针指向行尾.返回换行符的长度
@@ -49,11 +76,12 @@ private:
     // 指针由行首退回到上一个行尾
     void lastEnding(char ** ch);
     
+    String _method;
     map<String, String> _get;
     map<String, String> _post;
     map<String, FileInfo> _upload;
 
-    String _method;
+    static size_t _max_upload_size;
 };
 
 #endif
