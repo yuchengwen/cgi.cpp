@@ -7,6 +7,7 @@
 #define _TK_FORM_H_
 
 #include <map>
+#include <cstdio>
 #include "tk_string.h"
 #include "tk_platform.h"
 
@@ -23,8 +24,10 @@ enum Status
 // 上传文件的信息
 typedef struct
 {
-    // 不带路径的文件名
-    char name[64];
+    // 临时文件名
+    char name[L_tmpnam];
+    // 后缀名
+    char postfix[16];
     // 文件大小，单位Kb
     size_t size;
     char mime_type[64];
@@ -66,6 +69,9 @@ public:
     Status uploadStatus(const String & key);
     size_t uploadSize(const String & key);
     String uploadFile(const String &key);
+    String uploadMimeType(const String & key);
+    String uploadPostfix(const String & key);
+    
     void fileSaved(const String &key);
 
 private:

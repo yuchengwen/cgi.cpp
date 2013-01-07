@@ -59,14 +59,14 @@ void Page::setCookie(const String & key, const String &value, int second)
 
 String Page::saveUploadFile(const String &key)
 {
-    if(_form->uploadStatus(key) == Failed)
+    if(_form->uploadStatus(key) != Success)
         return "";
 
-    String filename(_form->uploadFile(key));
-    if(rename((Page::_temp_dir + filename).data(), (_document_root + Page::_upload_dir + filename).data()) == 0)
+    String filename = Page::_upload_dir + randomString() + _form->uploadPostfix(key);
+    if(rename(_form->uploadFile(key).data(), (_document_root + filename).data()) == 0)
     {
         _form->fileSaved(key);
-        return Page::_upload_dir + filename;
+        return filename;
     }
     else
     {

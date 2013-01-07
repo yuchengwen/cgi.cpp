@@ -1,11 +1,12 @@
 ﻿#include <cstdio>
 #include <cstring>
 #include <vector>
-#include <ctime>
 #include "tk_platform.h"
 #ifdef TK_WIN
 #include <io.h>
 #include <fcntl.h>
+#else
+#include <unistd.h>
 #endif
 #include "tk_log.h"
 #include "tk_form.h"
@@ -113,7 +114,7 @@ Form::Form()
                     ending_len = findEnding(&pos);
                     vector<String> mime_pair = String(line, pos - line).split(':');
                     if(mime_pair.size() == 2 && mime_pair[0] == "Content-Type")
-                        strcpy(file_info.mime_type, mime_pair[1].data());
+                        strncpy(file_info.mime_type, mime_pair[1].data(), sizeof(file_info.mime_type));
 
                     pos += ending_len;
                     // 越过空白行
@@ -128,32 +129,17 @@ Form::Form()
                         lastEnding(&line);
                         file_info.size = line - pos;
                     }
+                    
+                    // 后缀名
+                    vector<String> name_list = disposition["filename"].split('.');
+                    if(name_list.size() > 1)
+                        strncpy(file_info.postfix, name_list[name_list.size() - 1].data(), sizeof(file_info.postfix));
 
                     if(file_info.size / 1024 > Form::_max_upload_size)
                         file_info.status = Oversize;
                     else
                     {
-                        // 构造文件名
-                        sprintf(file_info.name, "%d", time(0));
-                        String postfix;
-                        vector<String> name_list = disposition["filename"].split('.');
-                        if(name_list.size() > 1)
-                            postfix = name_list[name_list.size() - 1];
-                        size_t name_idx = 0;
-                        do
-                        {
-                            String filename = String(file_info.name) + String::number(name_idx);
-                            if(!postfix.empty())
-                                filename = filename + "." + postfix;
-                            if(access(filename.data(), 0) == 0)
-                                name_idx++;
-                            else
-                            {
-                                strcpy(file_info.name, filename.data());
-                                break;
-                            }
-                        }while(name_idx < 1024);
-
+                        tmpnam(file_info.name);
                         FILE * file = fopen(file_info.name, "wb");
                         if(file)
                         {
@@ -256,7 +242,7 @@ Status Form::uploadStatus(const String & key)
 size_t Form::uploadSize(const String & key)
 {
     if(_upload.find(key) == _upload.end())
-        return Failed;
+        return 0;
     return _upload[key].size;
 }
 
@@ -265,6 +251,20 @@ String Form::uploadFile(const String & key)
     if(_upload.find(key) == _upload.end())
         return "";
     return _upload[key].name;
+}
+
+String Form::uploadMimeType(const String & key)
+{
+    if(_upload.find(key) == _upload.end())
+        return "";
+    return _upload[key].mime_type;
+}
+
+String Form::uploadPostfix(const String & key)
+{
+    if(_upload.find(key) == _upload.end())
+        return "";
+    return _upload[key].postfix;
 }
 
 void Form::fileSaved(const String & key)
