@@ -3,15 +3,15 @@
 * yu0736@live.com
 */
 
-#ifndef _TK_STRING_H_
-#define _TK_STRING_H_
+#ifndef _CPP_STRING_H_
+#define _CPP_STRING_H_
 
 #include <vector>
 #include <cstring>
 #include <cstdlib>
-#include "tk_platform.h"
+#include "cppplatform.h"
 
-class TK_API String
+class CPP_API String
 {
 public:
     String();

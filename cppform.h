@@ -3,13 +3,13 @@
 * yu0736@live.com
 */
 
-#ifndef _TK_FORM_H_
-#define _TK_FORM_H_
+#ifndef _CPP_FORM_H_
+#define _CPP_FORM_H_
 
 #include <map>
 #include <cstdio>
-#include "tk_string.h"
-#include "tk_platform.h"
+#include "cppstr.h"
+#include "cppplatform.h"
 
 using std::map;
 
@@ -34,7 +34,7 @@ typedef struct
     Status status;
 } FileInfo;
 
-class TK_API Form
+class CPP_API Form
 {
 public:
     Form();

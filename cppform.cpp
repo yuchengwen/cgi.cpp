@@ -1,15 +1,15 @@
 ﻿#include <cstdio>
 #include <cstring>
 #include <vector>
-#include "tk_platform.h"
-#ifdef TK_WIN
+#include "cppplatform.h"
+#ifdef CPP_WIN
 #include <io.h>
 #include <fcntl.h>
 #else
 #include <unistd.h>
 #endif
-#include "tk_log.h"
-#include "tk_form.h"
+#include "cpplog.h"
+#include "cppform.h"
 
 // POST报文块头部每行数据最长长度
 #define POST_LINE_LEN_MAX 512
@@ -21,7 +21,7 @@ size_t Form::_max_upload_size = 10240;
 
 Form::Form()
 {
-#ifdef TK_WIN
+#ifdef CPP_WIN
     // 必须设置输入输出为二进制模式，否则POST读取数据可能不完整
     _setmode(_fileno(stdin), _O_BINARY);
     _setmode(_fileno(stdout), _O_BINARY);
@@ -36,12 +36,12 @@ Form::Form()
         char * post_data = new (nothrow) char[post_len];
         if(!post_data)
         {
-            CGI_ERROR("Can't malloc for POST data");
+            CPP_ERROR("Can't malloc for POST data");
             return;
         }
 
         if(fread(post_data, 1, post_len, stdin) != post_len)
-            CGI_ERROR("Get post data error");
+            CPP_ERROR("Get post data error");
 
         String content_type = getenv("CONTENT_TYPE");
         if(!content_type.startsWith("multipart/form-data"))
@@ -150,7 +150,7 @@ Form::Form()
                         else
                         {
                             file_info.status = Failed;
-                            CGI_ERROR("upload file failed, path: %s", file_info.name);
+                            CPP_ERROR("upload file failed, path: %s", file_info.name);
                         }
                     }
                     _upload[disposition["name"]] = file_info;
@@ -227,7 +227,7 @@ Form::~Form()
         if(it->second.status == Success && access(it->second.name, 0) == 0)
         {
             if(remove(it->second.name) != 0)
-                CGI_ERROR("Delete file failed: %s", it->second.name);
+                CPP_ERROR("Delete file failed: %s", it->second.name);
         }
     }
 }

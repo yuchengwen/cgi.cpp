@@ -1,8 +1,8 @@
 ﻿#include <ctime>
-#include "tk_platform.h"
-#include "tk_log.h"
-#include "tk_config.h"
-#include "tk_page.h"
+#include "cppplatform.h"
+#include "cpplog.h"
+#include "cppconfig.h"
+#include "cpppage.h"
 
 #define TAG_L "<%"
 #define TAG_R "%>"
@@ -70,7 +70,7 @@ String Page::saveUploadFile(const String &key)
     }
     else
     {
-        CGI_ERROR("Move file failed");
+        CPP_ERROR("Move file failed");
         return "";
     }
 }
@@ -121,7 +121,7 @@ void Page::redirect(const String & url)
 
 void Page::notFound()
 {
-    CGI_ERROR("Page not found: %s", getenv("REQUEST_URI"));
+    CPP_ERROR("Page not found: %s", getenv("REQUEST_URI"));
     printf("%s\r\n\r\nPage not found", Page::_content_type.data());
 }
 
@@ -132,7 +132,7 @@ String Page::load(const String & tmpl)
     FILE * fp = fopen((Page::_tmpl_dir + tmpl).data(), "r");
     if(!fp)
     {
-        CGI_ERROR("Can't load tmpl file: %s", tmpl.data());
+        CPP_ERROR("Can't load tmpl file: %s", tmpl.data());
         return "";
     }
 
