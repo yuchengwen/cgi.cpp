@@ -34,8 +34,8 @@ Page::Page()
         _cookie[pair[0]] = pair[1];
     }
 
-    vector<String> path = String(getenv("PATH_INFO")).split('/');
-    if(_path_info[0].empty())
+    _path_info = String(getenv("PATH_INFO")).split('/');
+    if(!_path_info.empty() && _path_info[0].empty())
         _path_info.erase(_path_info.begin());
 }
 
