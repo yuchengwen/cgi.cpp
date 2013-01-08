@@ -40,6 +40,7 @@ public:
     Form();
     ~Form();
 
+    // 请求方法，大写
     inline String & method()
     {
         return _method;

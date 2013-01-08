@@ -94,13 +94,16 @@ size_t String::contain(const String & str)
     return result;
 }
 
-vector<String> String::split(char delim)
+vector<String> String::split(char delim, bool trimmed)
 {
     vector<String> result;
     char * sub = strtok(_data, &delim);
     while(sub != 0)
     {
-        result.push_back(String(sub));
+        if(trimmed)
+            result.push_back(String(sub).trimmed());
+        else
+            result.push_back(sub);
         sub = strtok(0, &delim);
     }
     return result;
@@ -251,6 +254,11 @@ String String::operator+(const String & str) const
     return operator+(str.data());
 }
 
+String operator+(const char * str1, const String & str2)
+{
+    return String(str1) + str2;
+}
+
 void String::operator+=(const char * str)
 {
     size_t len = _capacity;
@@ -275,6 +283,11 @@ void String::operator+=(const String & str)
 
 void String::operator=(const char * str)
 {
+    if(!str)
+    {
+        memset(_data, 0, _capacity);
+        return;
+    }
     size_t len = _capacity;
     while(len < strlen(str) + 1)
         len *= 2;

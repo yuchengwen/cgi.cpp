@@ -55,7 +55,7 @@ Form::Form()
             {
                 p = p[1].split('=');
                 if(p.size() == 2 && p[0] == "boundary")
-                    boundary = String("--") + p[1];
+                    boundary = "--" + p[1];
             }
 
             char * start = post_data;

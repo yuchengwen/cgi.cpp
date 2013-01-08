@@ -62,7 +62,10 @@ String Page::saveUploadFile(const String &key)
     if(_form->uploadStatus(key) != Success)
         return "";
 
-    String filename = Page::_upload_dir + randomString() + _form->uploadPostfix(key);
+    String filename = Page::_upload_dir + randomString();
+    String postfix = _form->uploadPostfix(key);
+    if(!postfix.empty())
+        filename += "." + postfix;
     if(rename(_form->uploadFile(key).data(), (_document_root + filename).data()) == 0)
     {
         _form->fileSaved(key);

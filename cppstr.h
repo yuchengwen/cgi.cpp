@@ -42,7 +42,7 @@ public:
     // 子字符串出现次数
     size_t contain(const String & str);
     // 分隔字符串
-    std::vector<String> split(char delim);
+    std::vector<String> split(char delim, bool trimmed = true);
     // 字符串替换
     String & replace(const String & old_part, const String & new_part);
     // 删除首尾空白字符
@@ -79,6 +79,7 @@ public:
 
     String operator+(const String & str) const;
     String operator+(const char * str) const;
+    friend String CPP_API operator+(const char * str1, const String & str2);
     void operator=(const String & str);
     void operator=(const char * str);
     void operator+=(const String & str);
