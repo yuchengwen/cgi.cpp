@@ -92,6 +92,10 @@ public:
     {
         _response[key] = value;
     }
+    inline void response(const String & key, const vector<map<String, String> > & value)
+    {
+        _response_list[key] = value;
+    }
 
     // 渲染模板, 显示页面
     void render(const String & tmpl);
@@ -103,6 +107,7 @@ private:
     Form * _form;
     map<String, String> _cookie;
     map<String, String> _response;
+    map<String, vector<map<String, String> > > _response_list;
     String _remote_addr;
     int _remote_port;
     String _document_root;

@@ -155,8 +155,26 @@ String Page::load(const String & tmpl)
             html += load(line.substr(start, idx_1 - start));
             continue;
         }
+        
+        // 循环变量替换
+        tag = String(TAG_L) + "foreach ";
+        idx_0 = line.find(tag);
+        idx_1 = line.find(TAG_R);
+        if(idx_0 != -1 && idx_1 != -1)
+        {
+            fgets(buf, sizeof(buf), fp);
+            size_t start = idx_0 + tag.size();
+            String param = line.substr(start, idx_1 - start);
+            for(int i = 0; i < _response_list[param].size(); i++)
+            {
+                String content = buf;
+                for(map<String, String>::iterator it = _response_list[param][i].begin(); it != _response_list[param][i].end(); it++)
+                    content.replace(String(TAG_L) + tag + "." + it->first + TAG_R, it->second);
+            }
+            continue;
+        }
 
-        // 变量替换
+        // 简单变量替换
         for(map<String, String>::iterator it = _response.begin(); it != _response.end(); it++)
             line.replace(String(TAG_L) + it->first + TAG_R, it->second);
         html += line;
