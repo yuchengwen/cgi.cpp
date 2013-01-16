@@ -33,11 +33,23 @@ int main()
     String name = page.form->get("name");
     page.response("name", name);
     
+    vector<map<String, String> > list;
+    map<String, String> person;
+    person["name"] = "Steven";
+    person["age"] = "26";
+    person["sex" = "male";
+    list.push_back(person);
+    person["name"] = "Jim";
+    person["age"] = "24";
+    person["sex" = "male";
+    list.push_back(person);
+    page.response("persons", list);
+    
     page.render("index.tmpl");
 }
 ```
 
-### Html template file: index.tmpl
+### Html template head file: header.tmpl
 
 ```html
 <html>
@@ -45,7 +57,15 @@ int main()
         <title><%title%></title>
     </head>
     <body>
-        Hello, <%name%>
+```
+
+### Html template file: index.tmpl
+
+```html
+<%inc header.tmpl%>
+        Hello, <%name%>. Your friend:<br />
+        <%foreach persons%>
+        Name: <%persons.name%>, age: <%persons.age%>, sex: <%person.sex%><br />
     </body>
 </html>
 ```
